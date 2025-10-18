@@ -1,0 +1,10 @@
+export const LOGIN: string = '/login';
+export const SIGNUP: string = '/signup';
+export const VIEW_CART: string = '/viewcart';
+export const ADD_TO_CART: string = '/addtocart';
+export const VIEW: string = '/view';
+export const BY_CATEGORY: string = '/bycat';
+export const DELETE_ITEM: string = '/deleteitem';
+export const ENTRIES: string = '/entries';
+export const DELETE_CART: string = '/deletecart';
+export const CHECK: string = '/check';

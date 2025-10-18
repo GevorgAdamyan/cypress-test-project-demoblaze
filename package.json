@@ -1,0 +1,42 @@
+{
+  "name": "cypress-test-project-demoblaze",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint . --ext .ts,.js",
+    "lint:fix": "eslint . --ext .ts,.js --fix",
+    "type-check": "tsc --noEmit",
+    "quality": "npm run format:check && npm run lint && npm run type-check",
+    "quality:fix": "npm run format && npm run lint:fix",
+    "cypress:open": "cypress open",
+    "cypress:run:api": "cypress run --spec \"cypress/e2e/API/**/*.cy.ts\" --browser chrome",
+    "cypress:run:ui": "cypress run --spec \"cypress/e2e/UI/**/*.cy.ts\" --browser chrome",
+    "cypress:run:auth": "cypress run --spec \"cypress/e2e/auth.cy.ts\" --browser chrome",
+    "test:all": "npm run cypress:run:auth && npm run cypress:run",
+    "test:api": "npm run cypress:run:auth && npm run cypress:run:api",
+    "test:ui": "npm run cypress:run:auth && npm run cypress:run:ui"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "cypress": "^15.5.0",
+    "@types/dotenv": "^6.1.1",
+    "@types/node": "^24.7.2",
+    "@typescript-eslint/eslint-plugin": "^8.8.0",
+    "@typescript-eslint/parser": "^8.8.0",
+    "depcheck": "^1.4.7",
+    "eslint": "^9.11.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-playwright": "^1.6.2",
+    "typescript": "^5.6.2"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "prettier": "^3.6.2"
+  }
+}

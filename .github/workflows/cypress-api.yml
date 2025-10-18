@@ -1,0 +1,114 @@
+name: Cypress Tests - API Only
+
+on:
+  workflow_dispatch: # Allow manual trigger only
+
+jobs:
+  api-test:
+    name: Run API Tests
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+
+    env:
+      # Environment variables for the tests
+      BASE_URL: https://demoblaze.com
+      BASE_URL_API: https://api.demoblaze.com
+      CI: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create environment file
+        run: |
+          echo "BASE_URL=${{ env.BASE_URL }}" >> cypress.env.json
+          echo "BASE_URL_API=${{ env.BASE_URL_API }}" >> cypress.env.json
+          echo "USERNAME=${{ secrets.USERNAME }}" >> cypress.env.json
+          echo "PASSWORD=${{ secrets.PASSWORD }}" >> cypress.env.json
+        shell: bash
+
+      - name: Create auth directory
+        run: mkdir -p cypress/fixtures/auth
+
+      - name: Run authentication setup
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          headless: true
+          spec: cypress/e2e/auth.cy.ts
+        env:
+          BASE_URL: ${{ env.BASE_URL }}
+          BASE_URL_API: ${{ env.BASE_URL_API }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+
+      - name: Verify authentication state
+        run: |
+          if [ ! -f "cypress/fixtures/auth/state.json" ]; then
+            echo "❌ Authentication failed - state.json not created"
+            exit 1
+          fi
+          echo "✅ Authentication successful - state.json created"
+
+      - name: Run API tests only
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          headless: true
+          spec: cypress/e2e/API/**/*.cy.ts
+        env:
+          BASE_URL: ${{ env.BASE_URL }}
+          BASE_URL_API: ${{ env.BASE_URL_API }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+
+      - name: Upload Cypress videos
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: api-test-videos-${{ github.run_number }}
+          path: cypress/videos/
+          retention-days: 7
+
+      - name: Upload Cypress screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: api-test-screenshots-${{ github.run_number }}
+          path: cypress/screenshots/
+          retention-days: 7
+
+      - name: Publish API test results summary
+        if: always()
+        run: |
+          echo "## 🔌 Cypress API Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Check authentication status
+          if [ -f "cypress/fixtures/auth/state.json" ]; then
+            echo "✅ **Authentication**: Successful" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Authentication**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "**Test Suite:** API Tests Only" >> $GITHUB_STEP_SUMMARY
+          echo "**Spec Pattern:** cypress/e2e/API/**/*.cy.ts" >> $GITHUB_STEP_SUMMARY
+          echo "**Browser:** Chrome (Headless)" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -d "cypress/videos" ] && [ "$(ls -A cypress/videos)" ]; then
+            echo "📹 Test videos available in artifacts (failures only)" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ -d "cypress/screenshots" ] && [ "$(ls -A cypress/screenshots)" ]; then
+            echo "📸 Screenshots available in artifacts (failures only)" >> $GITHUB_STEP_SUMMARY
+          fi

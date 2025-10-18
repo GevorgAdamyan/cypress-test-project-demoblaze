@@ -1,0 +1,62 @@
+name: Code Quality Checks
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  code-quality:
+    name: Code Quality & Linting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Prettier format check
+        run: npx prettier --check .
+        continue-on-error: true
+
+      - name: Run ESLint
+        run: npx eslint . --ext .ts,.js --format=github --max-warnings=50
+        continue-on-error: true
+
+      - name: TypeScript type check
+        run: npx tsc --noEmit --project cypress/tsconfig.json
+        continue-on-error: true
+
+      - name: Check for unused dependencies
+        run: npx depcheck --ignores="@types/*,prettier,eslint*,cypress,@cypress/*"
+        continue-on-error: true
+
+      - name: Security audit
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
+
+      - name: Generate code quality summary
+        if: always()
+        run: |
+          echo "## 📋 Code Quality Report (Relaxed Mode)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ✨ Lightweight Checks Performed:" >> $GITHUB_STEP_SUMMARY
+          echo "- 🎨 **Prettier**: Code formatting validation (non-blocking)" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔍 **ESLint**: Code linting with warnings (max 50 warnings allowed)" >> $GITHUB_STEP_SUMMARY
+          echo "- 📘 **TypeScript**: Basic type checking (non-blocking)" >> $GITHUB_STEP_SUMMARY
+          echo "- 📦 **Dependencies**: Unused package detection (advisory)" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔒 **Security**: Vulnerability audit (advisory)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "ℹ️ **Note**: This configuration prioritizes development velocity over strict enforcement." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
