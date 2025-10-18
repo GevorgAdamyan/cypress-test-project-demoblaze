@@ -61,7 +61,7 @@ cypress-test-project-demoblaze/
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
+   git clone <https://github.com/GevorgAdamyan/cypress-test-project-demoblaze.git>
    cd cypress-test-project-demoblaze
    ```
 
