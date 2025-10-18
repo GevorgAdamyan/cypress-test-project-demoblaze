@@ -1,0 +1,22 @@
+{
+  "cookies": [
+    {
+      "name": "user",
+      "value": "",
+      "path": "/",
+      "secure": false,
+      "hostOnly": true,
+      "httpOnly": false,
+      "domain": "www.demoblaze.com"
+    },
+    {
+      "name": "tokenp_",
+      "value": "",
+      "path": "/",
+      "secure": false,
+      "hostOnly": true,
+      "httpOnly": false,
+      "domain": "www.demoblaze.com"
+    }
+  ]
+}

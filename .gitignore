@@ -25,7 +25,6 @@ cypress/downloads/
 cypress/fixtures/downloads/
 
 # Authentication and sensitive data
-cypress/fixtures/auth/
 *.env
 .env.local
 .env.development.local
