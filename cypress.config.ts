@@ -21,10 +21,10 @@ export default defineConfig({
       // implement node event listeners here
     },
     env: {
-      BASE_URL: process.env.BASE_URL,
-      BASE_URL_API: process.env.BASE_URL_API,
-      USERNAME: process.env.USERNAME,
-      PASSWORD: process.env.PASSWORD,
+      "BASE_URL": process.env.BASE_URL,
+      "BASE_URL_API": process.env.BASE_URL_API,
+      "USERNAME": process.env.USERNAME,
+      "PASSWORD": process.env.PASSWORD,
     },
   },
 });
