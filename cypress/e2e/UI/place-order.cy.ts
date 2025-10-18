@@ -62,7 +62,7 @@ describe('Place Order', () => {
     orderModal.handleAlert(PLEASE_FILL_OUT_NAME_AND_CREDIT_CARD_MESSAGE);
   });
 
-  it('should place order with valid fields (failing due to a bug in the application)', () => {
+  it('should place order with valid fields', () => {
     cy.intercept(POST, DELETE_CART).as('placeOrderRequest');
     orderModal.insertTextInModal(NAME, CUSTOMER_NAME);
     orderModal.insertTextInModal(COUNTRY, CUSTOMER_COUNTRY);
