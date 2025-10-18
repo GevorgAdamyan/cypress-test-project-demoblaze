@@ -30,10 +30,10 @@ jobs:
 
       - name: Create environment file
         run: |
-          echo "BASE_URL=${{ env.BASE_URL }}" >> cypress.env.json
-          echo "BASE_URL_API=${{ env.BASE_URL_API }}" >> cypress.env.json
-          echo "USERNAME=${{ secrets.USERNAME }}" >> cypress.env.json
-          echo "PASSWORD=${{ secrets.PASSWORD }}" >> cypress.env.json
+          echo "BASE_URL=${{ env.BASE_URL }}" >> .env
+          echo "BASE_URL_API=${{ env.BASE_URL_API }}" >> .env
+          echo "USERNAME=${{ secrets.USERNAME }}" >> .env
+          echo "PASSWORD=${{ secrets.PASSWORD }}" >> .env
         shell: bash
 
       - name: Create auth directory
